@@ -22,11 +22,15 @@ public class ServiceConnection extends Thread {
       out = new PrintWriter(serviceSocket.getOutputStream(), true);
       in = new BufferedReader(new InputStreamReader(serviceSocket.getInputStream()));
       System.out.println("Just connected to " + serviceSocket.getRemoteSocketAddress());
+      // THIS IS WHERE IT IS CURRENTLY NOT WORKING
       while(!serviceSocket.isClosed()){
+        System.out.println(in.ready());
+        if(in.ready()){
           String receivedMessage = in.readLine();
           System.out.println("Message received from " + serviceSocket.getRemoteSocketAddress() + ": " + receivedMessage);
           ArrayList<ServiceConnection> connections = ChatServer.getConnections();
           sendMessages(connections, receivedMessage);
+        }
       }
       serviceSocket.close();
       System.out.println("Connection with " + serviceSocket.getRemoteSocketAddress() + " is now closed");

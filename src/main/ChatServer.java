@@ -30,8 +30,8 @@ public class ChatServer {
       try{
         Socket serviceSocket = serverSocket.accept();
         ServiceConnection connection = new ServiceConnection(serviceSocket);
-        connections.add(connection);
         connection.start();
+        connections.add(connection);
       }catch(IOException e){
         System.out.println(e);
       }
