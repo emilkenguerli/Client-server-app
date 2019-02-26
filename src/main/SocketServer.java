@@ -32,11 +32,15 @@ public class SocketServer {
       try{
         System.out.println("Waiting for client on port " + serverSocket.getLocalPort() + "...");
         serviceSocket = serverSocket.accept();
+        boolean connected = true;
         System.out.println("Just connected to " + serviceSocket.getRemoteSocketAddress());
-        DataInputStream in = new DataInputStream(serviceSocket.getInputStream());
-        System.out.println("Message received: " + in.readUTF());
-        DataOutputStream out = new DataOutputStream(serviceSocket.getOutputStream());
-        out.writeUTF("Thank you for connecting to " + serviceSocket.getLocalSocketAddress() + "\nGoodbye!");
+        while(connected){
+          DataInputStream in = new DataInputStream(serviceSocket.getInputStream());
+          System.out.println("Message received: " + in.readUTF());
+          DataOutputStream out = new DataOutputStream(serviceSocket.getOutputStream());
+          out.writeUTF("Thank you for connecting to " + serviceSocket.getLocalSocketAddress() + "\nGoodbye!");
+          System.out.println();
+        }
         serviceSocket.close();
       }catch(IOException e){
         System.out.println(e);
