@@ -8,7 +8,7 @@ public class SocketClientDriver {
       int portNumber = 9876;
       InetAddress host = InetAddress.getLocalHost();
       String hostName = host.getHostName();
-      Client client = new Client(hostName, portNumber);
+      SocketClient client = new SocketClient(hostName, portNumber);
       client.talkToServer();
     }catch(IOException e){
       System.out.println(e);
