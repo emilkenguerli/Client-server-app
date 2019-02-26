@@ -11,12 +11,12 @@ public class SocketServer {
   //We will only ever have one serverSocket and so it makes sense to have it declared here as static
   private static ServerSocket serverSocket;
    //Only one service socket for now.(We need to incorporate multiple threads somehow)
-  private static int portNumber = 9876;
+  private static int portNumber = 60123;
   //may be beneficial to have the port number in a config file.
 
   public static void main(String args[]){
     initialiseServerSocket();
-    listenRespond();
+    listen();
   }
 
   public static void initialiseServerSocket(){
@@ -27,10 +27,9 @@ public class SocketServer {
     }
   }
 
-  public static void listenRespond(){
+  public static void listen(){
     while(true){
       try{
-        System.out.println("Waiting for client on port " + serverSocket.getLocalPort() + "...");
         Socket serviceSocket = serverSocket.accept();
         Connection connection = new Connection(serviceSocket);
         connection.start();
