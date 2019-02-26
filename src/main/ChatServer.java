@@ -4,19 +4,17 @@ import java.io.DataOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.ArrayList;
 
-public class SocketServer {
+public class ChatServer {
 
-  //static ServerSocket variable
-  //We will only ever have one serverSocket and so it makes sense to have it declared here as static
   private static ServerSocket serverSocket;
-   //Only one service socket for now.(We need to incorporate multiple threads somehow)
   private static int portNumber = 60123;
-  //may be beneficial to have the port number in a config file.
+  private static ArrayList<ServiceConnection> connections = new ArrayList<ServiceConnection>();
 
   public static void main(String args[]){
     initialiseServerSocket();
-    listen();
+    acceptClients();
   }
 
   public static void initialiseServerSocket(){
@@ -27,15 +25,20 @@ public class SocketServer {
     }
   }
 
-  public static void listen(){
+  public static void acceptClients(){
     while(true){
       try{
         Socket serviceSocket = serverSocket.accept();
-        Connection connection = new Connection(serviceSocket);
+        ServiceConnection connection = new ServiceConnection(serviceSocket);
+        connections.add(connection);
         connection.start();
       }catch(IOException e){
         System.out.println(e);
       }
     }
+  }
+
+  public static ArrayList<ServiceConnection> getConnections(){
+    return connections;
   }
 }
