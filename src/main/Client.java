@@ -8,6 +8,9 @@ import java.util.Scanner;
 import java.io.PrintWriter;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.BufferedInputStream;
 
 public class Client{
 
@@ -15,8 +18,9 @@ public class Client{
   private static String userName;
   private static String hostName;
   private static int portNumber = 60123;
-  private static PrintWriter out;
-  private static BufferedReader in;
+  // private static PrintWriter out;
+  private static DataOutputStream out;
+  private static DataInputStream in;
   private static Socket clientSocket;
 
 
@@ -34,31 +38,33 @@ public class Client{
 
   private static void talkToServer(){
     try{
-      out = new PrintWriter(clientSocket.getOutputStream(), true);
-      in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+      // out = new PrintWriter(clientSocket.getOutputStream(), true);
+      out = new DataOutputStream(clientSocket.getOutputStream());
+      in = new DataInputStream(new BufferedInputStream(clientSocket.getInputStream()));
       System.out.println("Connecting to " + hostName + " on port " + portNumber);
       System.out.println("Just connected to " + clientSocket.getRemoteSocketAddress());
       while (!clientSocket.isClosed()){
-        String receivedMessage;
-        if(in.ready()){
-          receivedMessage = in.readLine();
+        if(!(in.available() == 0)){
+          System.out.println("Received messages:");
+          while(in.available() > 0){
+            String receivedMessage = in.readUTF();
+            System.out.println(receivedMessage);
+          }
         }else{
-          receivedMessage = null;
+          System.out.println("Received messages: None");
         }
-        if(receivedMessage != null){
-          System.out.println("Message received: " + receivedMessage);
-        }
-        System.out.println("receivedMessage: " + receivedMessage);
         System.out.println("Send a message to the group or type 'QUIT' to disconnect: ");
         Scanner keyboard = new Scanner(System.in);
         System.out.print(clientSocket.getInetAddress() + ": ");
         String clientMessage = keyboard.nextLine();
-        if(clientMessage == "QUIT"){
+        if(clientMessage.equals("QUIT")){
+          out.close();
           clientSocket.close();
           System.out.println("Connection is now closed");
         }else{
-          out.write(clientMessage);
+          out.writeUTF(clientMessage);
         }
+        System.out.println();
       }
     } catch(IOException e) {
       e.printStackTrace();
