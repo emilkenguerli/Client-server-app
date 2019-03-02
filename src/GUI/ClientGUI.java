@@ -14,6 +14,7 @@ public class ClientGUI extends javax.swing.JFrame {
     /**
      * Creates new form ClientGUI
      */
+    private String msg_out, cgname,cgpass,gname,gpass = "";
     public ClientGUI() {
         initComponents();
     }
@@ -67,8 +68,18 @@ public class ClientGUI extends javax.swing.JFrame {
         login_pass.setText("Group password");
 
         create_send.setText("Create group");
+        create_send.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                create_sendActionPerformed(evt);
+            }
+        });
 
         login_send.setText("Enter group");
+        login_send.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                login_sendActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -122,12 +133,68 @@ public class ClientGUI extends javax.swing.JFrame {
 
     private void msg_sendActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_msg_sendActionPerformed
         // TODO add your handling code here:
+        try{
+        msg_out = msg_text.getText().trim();
+        msg_area.setText(msg_area.getText().trim()+"\n"+msg_out);}
+        catch(Exception e){
+            System.out.println(e.getMessage()); // Print error message
+        }
     }//GEN-LAST:event_msg_sendActionPerformed
 
+    private String getMessage()
+    {
+        return msg_out;
+    }
+    
     private void msg_textActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_msg_textActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_msg_textActionPerformed
 
+    private void login_sendActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_login_sendActionPerformed
+        // TODO add your handling code here:
+        try{
+        gname = login_name.getText().trim();
+        gpass = login_pass.getText().trim();}
+        catch(Exception e){
+            System.out.println(e.getMessage()); // Print error message
+        }
+    }//GEN-LAST:event_login_sendActionPerformed
+
+    private void create_sendActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_create_sendActionPerformed
+        // TODO add your handling code here:
+        try{
+        cgname = create_name.getText().trim();
+        cgpass = create_pass.getText().trim();}
+        catch(Exception e){
+            System.out.println(e.getMessage()); // Print error message
+        }
+    }//GEN-LAST:event_create_sendActionPerformed
+    
+    private String getGroupName()
+    {
+        return gname;
+    }
+    
+    private String getGroupPassword()
+    {
+        return gpass;
+    }
+    
+    private String getNewGroupName()
+    {
+        return cgname;
+    }
+    
+    private String getNewGroupPassword()
+    {
+        return cgpass;
+    }
+    
+    private void addMessage(String message)
+    {
+        msg_area.setText(msg_area.getText().trim()+"\n"+message);
+    }
+    
     /**
      * @param args the command line arguments
      */
