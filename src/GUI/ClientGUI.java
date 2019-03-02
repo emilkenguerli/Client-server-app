@@ -154,7 +154,8 @@ public class ClientGUI extends javax.swing.JFrame {
         // TODO add your handling code here:
         try{
         gname = login_name.getText().trim();
-        gpass = login_pass.getText().trim();}
+        gpass = login_pass.getText().trim();
+        msg_area.setText("");}
         catch(Exception e){
             System.out.println(e.getMessage()); // Print error message
         }
@@ -164,7 +165,8 @@ public class ClientGUI extends javax.swing.JFrame {
         // TODO add your handling code here:
         try{
         cgname = create_name.getText().trim();
-        cgpass = create_pass.getText().trim();}
+        cgpass = create_pass.getText().trim();
+        msg_area.setText("");}
         catch(Exception e){
             System.out.println(e.getMessage()); // Print error message
         }
