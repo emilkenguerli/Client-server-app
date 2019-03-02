@@ -1,21 +1,24 @@
-import java.io.IOException;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.BindException;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.ArrayList;
+import java.util.UUID;
 
 public class ChatServer {
 
   private static ServerSocket serverSocket;
   private static int portNumber = 60123;
-  private static ArrayList<ServiceConnection> connections = new ArrayList<ServiceConnection>();
+  private static ConcurrentHashMap<UUID,ServiceConnection> connections = new ConcurrentHashMap<UUID,ServiceConnection>();
+
 
   public static void main(String args[]){
     initialiseServerSocket();
     acceptClients();
   }
+
 
   public static void initialiseServerSocket(){
     try{
@@ -25,20 +28,23 @@ public class ChatServer {
     }
   }
 
+
   public static void acceptClients(){
     while(true){
       try{
         Socket serviceSocket = serverSocket.accept();
-        ServiceConnection connection = new ServiceConnection(serviceSocket);
+        UUID groupId = UUID.randomUUID();
+        ServiceConnection connection = new ServiceConnection(groupId, serviceSocket);
         connection.start();
-        connections.add(connection);
+        connections.put(groupId, connection);
       }catch(IOException e){
         System.out.println(e);
       }
     }
   }
 
-  public static ArrayList<ServiceConnection> getConnections(){
+
+  public static ConcurrentHashMap<UUID,ServiceConnection> getConnections(){
     return connections;
   }
 }

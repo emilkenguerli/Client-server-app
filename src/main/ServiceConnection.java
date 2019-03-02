@@ -1,61 +1,71 @@
-import java.io.IOException;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.io.PrintWriter;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
+import java.net.SocketAddress;
+import java.net.SocketException;
 import java.util.ArrayList;
-import java.io.InputStream;
-import java.io.BufferedInputStream;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+
 
 public class ServiceConnection extends Thread {
+  private UUID groupId;
   private Socket serviceSocket;
+  private SocketAddress remoteSocketAddress;
   private DataOutputStream out;
-  // private BufferedReader in;
   private DataInputStream in;
 
-  public ServiceConnection(Socket serviceSocket){
+
+  public ServiceConnection(UUID groupId, Socket serviceSocket){
+    this.groupId = groupId;
     this.serviceSocket = serviceSocket;
+    this.remoteSocketAddress = serviceSocket.getRemoteSocketAddress();
   }
+
 
   public void run(){
     try{
-      // out = new PrintWriter(serviceSocket.getOutputStream(), true);
-      // in = new BufferedReader(new InputStreamReader(serviceSocket.getInputStream()));
       out = new DataOutputStream(serviceSocket.getOutputStream());
       in = new DataInputStream(new BufferedInputStream(serviceSocket.getInputStream()));
-
-      System.out.println("Just connected to " + serviceSocket.getRemoteSocketAddress());
-
-      // THIS IS WHERE IT IS CURRENTLY NOT WORKING
-      // possibly use: in = new Scanner(serviceSocket.getInputStream());
-
+      System.out.println("Just connected to " + remoteSocketAddress);
       while(!serviceSocket.isClosed()){
-        String receivedMessage = in.readUTF();
-        System.out.println("Message received from " + serviceSocket.getRemoteSocketAddress() + ": " + receivedMessage);
-        ArrayList<ServiceConnection> connections = ChatServer.getConnections();
-        sendMessages(connections, receivedMessage);
+        if(!(in.available() == 0)){
+          String receivedMessage = in.readUTF();
+          System.out.println("Message received from " + remoteSocketAddress + ": " + receivedMessage);
+          ConcurrentHashMap<UUID,ServiceConnection> connections = ChatServer.getConnections();
+          sendMessages(connections, receivedMessage);
+        }
       }
-      serviceSocket.close();
-      System.out.println("Connection with " + serviceSocket.getRemoteSocketAddress() + " is now closed");
+      System.out.println("Connection with " + remoteSocketAddress + " is now closed");
     } catch (IOException e) {
       System.out.println(e);
     }
   }
 
-  public DataOutputStream getWriter(){
-    return out;
-  }
 
-  private void sendMessages(ArrayList<ServiceConnection> connections, String message){
-    for(ServiceConnection connection: connections){
+  private void sendMessages(ConcurrentHashMap<UUID,ServiceConnection> connections, String message){
+    for(ServiceConnection connection: connections.values()){
       try{
         connection.getWriter().writeUTF(message);
       }catch(IOException e){
-        System.out.println(e);
+        connections.remove(connection.getGroupId());
+        System.out.println("Connection with remote socket " + connection.getRemoteSocketAddress() + " has been closed");
       }
     }
+  }
+
+
+  public SocketAddress getRemoteSocketAddress(){
+    return this.remoteSocketAddress;
+  }
+
+
+  public DataOutputStream getWriter(){
+      return out;
+  }
+
+
+  public UUID getGroupId(){
+    return groupId;
   }
 }
