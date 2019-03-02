@@ -35,7 +35,12 @@ public class Client{
       in = new DataInputStream(new BufferedInputStream(clientSocket.getInputStream()));
       System.out.println("Connecting to " + hostName + " on port " + portNumber);
       System.out.println("Just connected to " + clientSocket.getRemoteSocketAddress());
+      System.out.print("Enter a valid group name: ");
+      Scanner keyboard = new Scanner(System.in);
+      String groupName = keyboard.nextLine();
+      out.writeUTF(groupName);
       while (!clientSocket.isClosed()){
+        System.out.println();
         if(!(in.available() == 0)){
           System.out.println("Received messages:");
           while(in.available() > 0){
@@ -46,7 +51,6 @@ public class Client{
           System.out.println("Received messages: None");
         }
         System.out.println("Send a message to the group or type 'QUIT' to disconnect: ");
-        Scanner keyboard = new Scanner(System.in);
         System.out.print(clientSocket.getInetAddress() + ": ");
         String clientMessage = keyboard.nextLine();
         if(clientMessage.equals("QUIT")){
@@ -56,7 +60,6 @@ public class Client{
         }else{
           out.writeUTF(clientMessage);
         }
-        System.out.println();
       }
     } catch(IOException e) {
       e.printStackTrace();

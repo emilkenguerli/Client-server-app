@@ -9,6 +9,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 
 public class ServiceConnection extends Thread {
+  private UUID clientId;
   private UUID groupId;
   private Socket serviceSocket;
   private SocketAddress remoteSocketAddress;
@@ -16,8 +17,8 @@ public class ServiceConnection extends Thread {
   private DataInputStream in;
 
 
-  public ServiceConnection(UUID groupId, Socket serviceSocket){
-    this.groupId = groupId;
+  public ServiceConnection(UUID clientId, Socket serviceSocket){
+    this.clientId = clientId;
     this.serviceSocket = serviceSocket;
     this.remoteSocketAddress = serviceSocket.getRemoteSocketAddress();
   }
@@ -28,12 +29,16 @@ public class ServiceConnection extends Thread {
       out = new DataOutputStream(serviceSocket.getOutputStream());
       in = new DataInputStream(new BufferedInputStream(serviceSocket.getInputStream()));
       System.out.println("Just connected to " + remoteSocketAddress);
+      String groupName = in.readUTF();
+      ChatGroup group = ChatServer.addConnection(groupName, this);
       while(!serviceSocket.isClosed()){
         if(!(in.available() == 0)){
           String receivedMessage = in.readUTF();
           System.out.println("Message received from " + remoteSocketAddress + ": " + receivedMessage);
-          ConcurrentHashMap<UUID,ServiceConnection> connections = ChatServer.getConnections();
-          sendMessages(connections, receivedMessage);
+          // ChatGroup group = ChatServer.getGroup(groupId);
+          group.sendMessages(receivedMessage);
+          // ConcurrentHashMap<UUID,ServiceConnection> connections = ChatServer.getConnections();
+          // sendMessages(connections, receivedMessage);
         }
       }
       System.out.println("Connection with " + remoteSocketAddress + " is now closed");
@@ -48,10 +53,20 @@ public class ServiceConnection extends Thread {
       try{
         connection.getWriter().writeUTF(message);
       }catch(IOException e){
-        connections.remove(connection.getGroupId());
+        connections.remove(connection.getClientId());
         System.out.println("Connection with remote socket " + connection.getRemoteSocketAddress() + " has been closed");
       }
     }
+  }
+
+
+  public void setGroupId(UUID groupId){
+    this.groupId = groupId;
+  }
+
+
+  public UUID getGroupId(){
+    return groupId;
   }
 
 
@@ -65,7 +80,7 @@ public class ServiceConnection extends Thread {
   }
 
 
-  public UUID getGroupId(){
-    return groupId;
+  public UUID getClientId(){
+    return clientId;
   }
 }
