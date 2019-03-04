@@ -14,7 +14,7 @@ public class ClientGUI extends javax.swing.JFrame {
     /**
      * Creates new form ClientGUI
      */
-    private String msg_out, cgname,cgpass,gname,gpass = "";
+    private String msg_out, cgname,cgpass,gname,gpass,fname = "";
     public ClientGUI() {
         initComponents();
     }
@@ -38,6 +38,7 @@ public class ClientGUI extends javax.swing.JFrame {
         login_pass = new javax.swing.JTextField();
         create_send = new javax.swing.JButton();
         login_send = new javax.swing.JButton();
+        download_button = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -64,8 +65,18 @@ public class ClientGUI extends javax.swing.JFrame {
         create_name.setText("Create group name");
 
         create_pass.setText("Create group password");
+        create_pass.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                create_passActionPerformed(evt);
+            }
+        });
 
         login_pass.setText("Group password");
+        login_pass.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                login_passActionPerformed(evt);
+            }
+        });
 
         create_send.setText("Create group");
         create_send.addActionListener(new java.awt.event.ActionListener() {
@@ -78,6 +89,13 @@ public class ClientGUI extends javax.swing.JFrame {
         login_send.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 login_sendActionPerformed(evt);
+            }
+        });
+
+        download_button.setText("Download File");
+        download_button.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                download_buttonActionPerformed(evt);
             }
         });
 
@@ -104,7 +122,8 @@ public class ClientGUI extends javax.swing.JFrame {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(create_send, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(login_send, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(download_button, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -124,74 +143,185 @@ public class ClientGUI extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(create_name)
                     .addComponent(create_pass)
-                    .addComponent(create_send, javax.swing.GroupLayout.DEFAULT_SIZE, 46, Short.MAX_VALUE))
+                    .addComponent(create_send, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(download_button, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
+    
+    /**
+     * Sends message to the message area.
+     * @param evt 
+     */
     private void msg_sendActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_msg_sendActionPerformed
-        // TODO add your handling code here:
         try{
         msg_out = msg_text.getText().trim();
-        msg_area.setText(msg_area.getText().trim()+"\n"+msg_out);}
+        msg_text.setText("");
+        msg_area.setText(msg_area.getText().trim()+"\n"+msg_out);
+        char[] cAr = msg_out.toCharArray();
+        if(cAr[0] == '-' && cAr[1] == 'f')
+        {
+            fname = msg_out.substring(3);
+            msg_area.setText(msg_area.getText().trim()+"\nFile received: "+fname);
+        }
+        }
         catch(Exception e){
-            System.out.println(e.getMessage()); // Print error message
+            msg_area.setText(msg_area.getText().trim()+"\n"+e.getMessage()); // Print error message
         }
     }//GEN-LAST:event_msg_sendActionPerformed
-
+    
+    /**
+     * Returns the last message sent.
+     * @return 
+     */
     private String getMessage()
     {
         return msg_out;
     }
     
+    /**
+     * Sends message to the message area.
+     * @param evt 
+     */
     private void msg_textActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_msg_textActionPerformed
-        // TODO add your handling code here:
+        try{
+        msg_out = msg_text.getText().trim();
+        msg_text.setText("");
+        msg_area.setText(msg_area.getText().trim()+"\n"+msg_out);
+        char[] cAr = msg_out.toCharArray();
+        if(cAr[0] == '-' && cAr[1] == 'f')
+        {
+            fname = msg_out.substring(3);
+            msg_area.setText(msg_area.getText().trim()+"\nFile received: "+fname);
+        }
+        }
+        catch(Exception e){
+            msg_area.setText(msg_area.getText().trim()+"\n"+e.getMessage()); // Print error message
+        }
     }//GEN-LAST:event_msg_textActionPerformed
-
+    
+    /**
+     * Collects login details and opens new group chat.
+     * @param evt 
+     */
     private void login_sendActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_login_sendActionPerformed
-        // TODO add your handling code here:
         try{
         gname = login_name.getText().trim();
         gpass = login_pass.getText().trim();
+        login_name.setText("");
+        login_pass.setText("");
         msg_area.setText("");}
         catch(Exception e){
-            System.out.println(e.getMessage()); // Print error message
+            msg_area.setText(msg_area.getText().trim()+"\n"+e.getMessage()); // Print error message
         }
     }//GEN-LAST:event_login_sendActionPerformed
-
+    
+    
+    /**
+     * Creates group name and password.
+     * @param evt 
+     */
     private void create_sendActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_create_sendActionPerformed
-        // TODO add your handling code here:
         try{
         cgname = create_name.getText().trim();
         cgpass = create_pass.getText().trim();
+        create_name.setText("");
+        create_pass.setText("");
         msg_area.setText("");}
         catch(Exception e){
-            System.out.println(e.getMessage()); // Print error message
+            msg_area.setText(msg_area.getText().trim()+"\n"+e.getMessage()); // Print error message
         }
     }//GEN-LAST:event_create_sendActionPerformed
     
+    /**
+     * Collects login details and opens new group chat.
+     * @param evt 
+     */
+    private void login_passActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_login_passActionPerformed
+        try{
+        gname = login_name.getText().trim();
+        gpass = login_pass.getText().trim();
+        login_name.setText("");
+        login_pass.setText("");
+        msg_area.setText("");}
+        catch(Exception e){
+            msg_area.setText(msg_area.getText().trim()+"\n"+e.getMessage()); // Print error message
+        }
+    }//GEN-LAST:event_login_passActionPerformed
+    
+    /**
+     * Creates and saves Group-Password combination.
+     * @param evt 
+     */
+    private void create_passActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_create_passActionPerformed
+        try{
+        cgname = create_name.getText().trim();
+        cgpass = create_pass.getText().trim();
+        create_name.setText("");
+        create_pass.setText("");
+        msg_area.setText("");}
+        catch(Exception e){
+            msg_area.setText(msg_area.getText().trim()+"\n"+e.getMessage()); // Print error message
+        }
+    }//GEN-LAST:event_create_passActionPerformed
+
+    private void download_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_download_buttonActionPerformed
+        try{
+        if(!fname.equals(""))
+        {
+            // Download file fname
+            msg_area.setText(msg_area.getText().trim()+"\n"+fname+" downloaded");
+        }
+        else{
+            msg_area.setText(msg_area.getText().trim()+"\nNo file selected");           
+        }}catch(Exception e){
+            msg_area.setText(msg_area.getText().trim()+"\n"+e.getMessage()); // Print error message            
+        }
+    }//GEN-LAST:event_download_buttonActionPerformed
+    
+    /**
+     * Returns the Group name.
+     * @return 
+     */
     private String getGroupName()
     {
         return gname;
     }
     
+    /**
+     * Returns the group password.
+     * @return 
+     */
     private String getGroupPassword()
     {
         return gpass;
     }
     
+    /**
+     * Returns the new group name.
+     * @return 
+     */
     private String getNewGroupName()
     {
         return cgname;
     }
     
+    /**
+     * Returns the new group password.
+     * @return 
+     */
     private String getNewGroupPassword()
     {
         return cgpass;
     }
     
+    /**
+     * Adds a message to the text area.
+     * @param message 
+     */
     private void addMessage(String message)
     {
         msg_area.setText(msg_area.getText().trim()+"\n"+message);
@@ -228,6 +358,7 @@ public class ClientGUI extends javax.swing.JFrame {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new ClientGUI().setVisible(true);
+                msg_area.setEditable(false);
             }
         });
     }
@@ -236,11 +367,12 @@ public class ClientGUI extends javax.swing.JFrame {
     private javax.swing.JTextField create_name;
     private javax.swing.JTextField create_pass;
     private javax.swing.JButton create_send;
+    private javax.swing.JButton download_button;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextField login_name;
     private javax.swing.JTextField login_pass;
     private javax.swing.JButton login_send;
-    private javax.swing.JTextArea msg_area;
+    private static javax.swing.JTextArea msg_area;
     private javax.swing.JButton msg_send;
     private javax.swing.JTextField msg_text;
     // End of variables declaration//GEN-END:variables
