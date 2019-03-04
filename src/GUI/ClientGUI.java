@@ -3,7 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package chatservergui;
+
+import java.io.File;
+import javax.swing.JFileChooser;
 
 /**
  *
@@ -14,7 +16,7 @@ public class ClientGUI extends javax.swing.JFrame {
     /**
      * Creates new form ClientGUI
      */
-    private String msg_out, cgname,cgpass,gname,gpass,fname = "";
+    private String msg_out, cgname,cgpass,gname,gpass,filepath = "";
     public ClientGUI() {
         initComponents();
     }
@@ -28,7 +30,7 @@ public class ClientGUI extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jScrollPane1 = new javax.swing.JScrollPane();
+        msg_area_sp = new javax.swing.JScrollPane();
         msg_area = new javax.swing.JTextArea();
         msg_text = new javax.swing.JTextField();
         msg_send = new javax.swing.JButton();
@@ -39,12 +41,16 @@ public class ClientGUI extends javax.swing.JFrame {
         create_send = new javax.swing.JButton();
         login_send = new javax.swing.JButton();
         download_button = new javax.swing.JButton();
+        file_upload = new javax.swing.JButton();
+        dfname = new javax.swing.JTextField();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        dload_area = new javax.swing.JTextArea();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         msg_area.setColumns(20);
         msg_area.setRows(5);
-        jScrollPane1.setViewportView(msg_area);
+        msg_area_sp.setViewportView(msg_area);
 
         msg_text.setText("Type a message...");
         msg_text.addActionListener(new java.awt.event.ActionListener() {
@@ -99,53 +105,78 @@ public class ClientGUI extends javax.swing.JFrame {
             }
         });
 
+        file_upload.setText("Upload");
+        file_upload.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                file_uploadActionPerformed(evt);
+            }
+        });
+
+        dfname.setText("Give a filename");
+        dfname.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                dfnameActionPerformed(evt);
+            }
+        });
+
+        dload_area.setColumns(20);
+        dload_area.setRows(5);
+        jScrollPane1.setViewportView(dload_area);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(msg_text, javax.swing.GroupLayout.PREFERRED_SIZE, 324, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(msg_text, javax.swing.GroupLayout.PREFERRED_SIZE, 324, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(msg_send, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(dfname, javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(file_upload, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                    .addComponent(login_send, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(download_button, javax.swing.GroupLayout.DEFAULT_SIZE, 151, Short.MAX_VALUE)
+                    .addComponent(login_pass)))
+            .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                        .addComponent(create_name, javax.swing.GroupLayout.PREFERRED_SIZE, 156, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(create_pass, javax.swing.GroupLayout.PREFERRED_SIZE, 158, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(msg_send, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(login_name, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 156, Short.MAX_VALUE)
-                            .addComponent(create_name, javax.swing.GroupLayout.Alignment.LEADING))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(create_pass, javax.swing.GroupLayout.DEFAULT_SIZE, 162, Short.MAX_VALUE)
-                            .addComponent(login_pass))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(create_send, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(login_send, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(download_button, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap())
+                        .addComponent(create_send, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(msg_area_sp, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 432, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(login_name, javax.swing.GroupLayout.DEFAULT_SIZE, 151, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 213, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(msg_send, javax.swing.GroupLayout.DEFAULT_SIZE, 57, Short.MAX_VALUE)
-                    .addComponent(msg_text))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(login_name)
-                    .addComponent(login_pass)
-                    .addComponent(login_send, javax.swing.GroupLayout.DEFAULT_SIZE, 52, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(login_name, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(login_pass, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(login_send, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(file_upload, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(msg_area_sp, javax.swing.GroupLayout.PREFERRED_SIZE, 246, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(create_name)
-                    .addComponent(create_pass)
-                    .addComponent(create_send, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(msg_text)
+                    .addComponent(msg_send, javax.swing.GroupLayout.DEFAULT_SIZE, 24, Short.MAX_VALUE)
+                    .addComponent(dfname))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(download_button, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(create_send, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(create_pass, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(create_name, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(download_button, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -161,12 +192,6 @@ public class ClientGUI extends javax.swing.JFrame {
         msg_out = msg_text.getText().trim();
         msg_text.setText("");
         msg_area.setText(msg_area.getText().trim()+"\n"+msg_out);
-        char[] cAr = msg_out.toCharArray();
-        if(cAr[0] == '-' && cAr[1] == 'f')
-        {
-            fname = msg_out.substring(3);
-            msg_area.setText(msg_area.getText().trim()+"\nFile received: "+fname);
-        }
         }
         catch(Exception e){
             msg_area.setText(msg_area.getText().trim()+"\n"+e.getMessage()); // Print error message
@@ -177,7 +202,7 @@ public class ClientGUI extends javax.swing.JFrame {
      * Returns the last message sent.
      * @return 
      */
-    private String getMessage()
+    public String getMessage()
     {
         return msg_out;
     }
@@ -191,12 +216,6 @@ public class ClientGUI extends javax.swing.JFrame {
         msg_out = msg_text.getText().trim();
         msg_text.setText("");
         msg_area.setText(msg_area.getText().trim()+"\n"+msg_out);
-        char[] cAr = msg_out.toCharArray();
-        if(cAr[0] == '-' && cAr[1] == 'f')
-        {
-            fname = msg_out.substring(3);
-            msg_area.setText(msg_area.getText().trim()+"\nFile received: "+fname);
-        }
         }
         catch(Exception e){
             msg_area.setText(msg_area.getText().trim()+"\n"+e.getMessage()); // Print error message
@@ -267,11 +286,18 @@ public class ClientGUI extends javax.swing.JFrame {
             msg_area.setText(msg_area.getText().trim()+"\n"+e.getMessage()); // Print error message
         }
     }//GEN-LAST:event_create_passActionPerformed
-
+    
+    /**
+     * Method to download file from list.
+     * @param evt 
+     */
     private void download_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_download_buttonActionPerformed
         try{
+        String fname = dfname.getText().trim();
+        dfname.setText("");
         if(!fname.equals(""))
         {
+            //if(fname) // Check if download filename in dlist
             // Download file fname
             msg_area.setText(msg_area.getText().trim()+"\n"+fname+" downloaded");
         }
@@ -281,12 +307,56 @@ public class ClientGUI extends javax.swing.JFrame {
             msg_area.setText(msg_area.getText().trim()+"\n"+e.getMessage()); // Print error message            
         }
     }//GEN-LAST:event_download_buttonActionPerformed
+
+    private void dfnameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dfnameActionPerformed
+        try{
+        String fname = dfname.getText().trim();
+        dfname.setText("");
+        if(!fname.equals(""))
+        {
+            //if(fname) // Check if download filename in dlist
+            // Download file fname
+            msg_area.setText(msg_area.getText().trim()+"\n"+fname+" downloaded");
+        }
+        else{
+            msg_area.setText(msg_area.getText().trim()+"\nNo file selected");           
+        }}catch(Exception e){
+            msg_area.setText(msg_area.getText().trim()+"\n"+e.getMessage()); // Print error message            
+        }
+    }//GEN-LAST:event_dfnameActionPerformed
+    
+    /**
+     * Upload a file.
+     * @param evt 
+     */
+    private void file_uploadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_file_uploadActionPerformed
+        try{
+            JFileChooser fc = new JFileChooser();
+            fc.setVisible(true);
+            fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+            fc.showOpenDialog(this);
+            File file = fc.getSelectedFile();
+            filepath = file.getAbsolutePath();
+            msg_area.setText(msg_area.getText().trim()+"\n"+filepath);
+        }
+        catch(Exception e){
+            msg_area.setText(msg_area.getText().trim()+"\n"+e.getMessage()); // Print error message            
+        }
+    }//GEN-LAST:event_file_uploadActionPerformed
+    
+    /**
+     * Adds a filename and extension to the download area.
+     * @param filename 
+     */
+    public void addToDArea(String filename){
+        dload_area.setText(dload_area.getText().trim()+"\n"+filename);
+    }
     
     /**
      * Returns the Group name.
      * @return 
      */
-    private String getGroupName()
+    public String getGroupName()
     {
         return gname;
     }
@@ -295,7 +365,7 @@ public class ClientGUI extends javax.swing.JFrame {
      * Returns the group password.
      * @return 
      */
-    private String getGroupPassword()
+    public String getGroupPassword()
     {
         return gpass;
     }
@@ -304,7 +374,7 @@ public class ClientGUI extends javax.swing.JFrame {
      * Returns the new group name.
      * @return 
      */
-    private String getNewGroupName()
+    public String getNewGroupName()
     {
         return cgname;
     }
@@ -313,7 +383,7 @@ public class ClientGUI extends javax.swing.JFrame {
      * Returns the new group password.
      * @return 
      */
-    private String getNewGroupPassword()
+    public String getNewGroupPassword()
     {
         return cgpass;
     }
@@ -322,7 +392,7 @@ public class ClientGUI extends javax.swing.JFrame {
      * Adds a message to the text area.
      * @param message 
      */
-    private void addMessage(String message)
+    public void addMessage(String message)
     {
         msg_area.setText(msg_area.getText().trim()+"\n"+message);
     }
@@ -359,6 +429,7 @@ public class ClientGUI extends javax.swing.JFrame {
             public void run() {
                 new ClientGUI().setVisible(true);
                 msg_area.setEditable(false);
+                dload_area.setEditable(false);
             }
         });
     }
@@ -367,12 +438,16 @@ public class ClientGUI extends javax.swing.JFrame {
     private javax.swing.JTextField create_name;
     private javax.swing.JTextField create_pass;
     private javax.swing.JButton create_send;
+    private javax.swing.JTextField dfname;
+    private static javax.swing.JTextArea dload_area;
     private javax.swing.JButton download_button;
+    private javax.swing.JButton file_upload;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextField login_name;
     private javax.swing.JTextField login_pass;
     private javax.swing.JButton login_send;
     private static javax.swing.JTextArea msg_area;
+    private javax.swing.JScrollPane msg_area_sp;
     private javax.swing.JButton msg_send;
     private javax.swing.JTextField msg_text;
     // End of variables declaration//GEN-END:variables
