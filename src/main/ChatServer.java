@@ -64,8 +64,8 @@ public class ChatServer {
       searchGroup.addConnection(connection);
       System.out.println("Didn't make new group");
     }
-    for(ServiceConnection connection2: searchGroup.getConnections().values()){
-      System.out.println(connection2.getRemoteSocketAddress());
+    for(ServiceConnection con: searchGroup.getConnections().values()){
+      System.out.println(con.getRemoteSocketAddress());
     }
     return searchGroup;
   }

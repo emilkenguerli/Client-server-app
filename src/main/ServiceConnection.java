@@ -6,6 +6,11 @@ import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.lang.Integer;
+
+import java.nio.file.Paths;
+import java.nio.file.Path;
+import java.nio.file.Files;
 
 
 public class ServiceConnection extends Thread {
@@ -15,6 +20,8 @@ public class ServiceConnection extends Thread {
   private SocketAddress remoteSocketAddress;
   private DataOutputStream out;
   private DataInputStream in;
+  private InputStream fileIn;
+  private OutputStream fileOut;
 
 
   public ServiceConnection(UUID clientId, Socket serviceSocket){
@@ -26,19 +33,35 @@ public class ServiceConnection extends Thread {
 
   public void run(){
     try{
-      out = new DataOutputStream(serviceSocket.getOutputStream());
-      in = new DataInputStream(new BufferedInputStream(serviceSocket.getInputStream()));
+      fileIn = serviceSocket.getInputStream();
+      fileOut = serviceSocket.getOutputStream();
+      out = new DataOutputStream(fileOut);
+      in = new DataInputStream(new BufferedInputStream(fileIn));
       System.out.println("Just connected to " + remoteSocketAddress);
       String groupName = in.readUTF();
       ChatGroup group = ChatServer.addConnection(groupName, this);
       while(!serviceSocket.isClosed()){
         if(!(in.available() == 0)){
           String receivedMessage = in.readUTF();
-          System.out.println("Message received from " + remoteSocketAddress + ": " + receivedMessage);
-          // ChatGroup group = ChatServer.getGroup(groupId);
-          group.sendMessages(receivedMessage);
-          // ConcurrentHashMap<UUID,ServiceConnection> connections = ChatServer.getConnections();
-          // sendMessages(connections, receivedMessage);
+          if(receivedMessage.equals("sending_file --true")){
+            System.out.println("File transfer called");
+            String receivedPath = in.readUTF();
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            while(fileIn.available() != 0) {
+                baos.write(fileIn.read());
+            }
+            byte[] fileContent = baos.toByteArray();
+            String[] fileNameArray = receivedPath.split("/");
+            String fileName = fileNameArray[fileNameArray.length -1];
+            group.addFile(fileName, fileContent);
+            group.sendMessages("new_file_uploaded " + fileName);
+          } else if(receivedMessage.equals("requesting_file --true")) {
+            String fileName = in.readUTF();
+            group.sendFile(this.clientId, fileName);
+          }else{
+            System.out.println("Message received from " + remoteSocketAddress + ": " + receivedMessage);
+            group.sendMessages(receivedMessage);
+          }
         }
       }
       System.out.println("Connection with " + remoteSocketAddress + " is now closed");
@@ -48,14 +71,12 @@ public class ServiceConnection extends Thread {
   }
 
 
-  private void sendMessages(ConcurrentHashMap<UUID,ServiceConnection> connections, String message){
-    for(ServiceConnection connection: connections.values()){
-      try{
-        connection.getWriter().writeUTF(message);
-      }catch(IOException e){
-        connections.remove(connection.getClientId());
-        System.out.println("Connection with remote socket " + connection.getRemoteSocketAddress() + " has been closed");
-      }
+  public void downloadFile(byte[] fileContent, String filePath) {
+    try {
+      Path path = Paths.get(filePath);
+      Files.write(path, fileContent);
+    } catch (IOException e) {
+      e.printStackTrace();
     }
   }
 
@@ -77,6 +98,11 @@ public class ServiceConnection extends Thread {
 
   public DataOutputStream getWriter(){
       return out;
+  }
+
+
+  public OutputStream getFileOut(){
+    return fileOut;
   }
 
 
