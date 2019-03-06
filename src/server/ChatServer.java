@@ -80,6 +80,19 @@ public class ChatServer {
   }
 
 
+  public static Socket establishFileConnection(){
+    Socket fileServiceSocket = null;
+    try{
+      fileServiceSocket = serverSocket.accept();
+      FileConnection fileConnection = new FileConnection(fileServiceSocket);
+    }catch(IOException e){
+      System.out.println(e);
+    }finally{
+      return fileServiceSocket;
+    }
+  }
+
+
   public static ChatGroup getGroup(UUID groupId){
     return groups.get(groupId);
   }

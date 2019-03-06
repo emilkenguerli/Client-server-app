@@ -5,6 +5,11 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.net.Socket;
 
+
+import java.nio.file.Paths;
+import java.nio.file.Path;
+import java.nio.file.Files;
+
 public class ChatGroup {
 
   ConcurrentHashMap<UUID,ServiceConnection> connections = new ConcurrentHashMap<UUID, ServiceConnection>();
@@ -26,10 +31,12 @@ public class ChatGroup {
     connections.put(clientId, connection);
   }
 
+
   public void addFile(String fileName, byte[] fileContent){
     System.out.println(fileName + " is now in the database");
     files.put(fileName, fileContent);
   }
+
 
   public void sendMessages(String message, boolean fileUploaded){
     for(ServiceConnection connection: connections.values()){
@@ -49,16 +56,20 @@ public class ChatGroup {
     }
   }
 
+
   public void sendFile(UUID clientId, String fileName){
     try{
       ServiceConnection connection = connections.get(clientId);
       OutputStream fileOut = connection.getFileOut();
       byte[] fileContent = files.get(fileName);
+      String path = "../"+fileName;
+      downloadFile(fileContent, path);
       fileOut.write(fileContent);
     }catch(IOException e){
       System.out.println(e);
     }
   }
+
 
   public String getGroupName(){
     return groupName;
@@ -74,8 +85,18 @@ public class ChatGroup {
     return connections;
   }
 
+
   public String getPassword(){
     return password;
+  }
+
+  public void downloadFile(byte[] fileContent, String filePath) {
+    try {
+      Path path = Paths.get(filePath);
+      Files.write(path, fileContent);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
   }
 
 }

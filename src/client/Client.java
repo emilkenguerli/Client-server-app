@@ -29,7 +29,8 @@ public class Client{
 
   public static void main(String[] args){
     try{
-      downloadFile(content, path);
+      // clientSocket = establishConnection("client_connection --true");
+
       InetAddress host = InetAddress.getLocalHost();
       hostName = host.getHostName();
       clientSocket = new Socket(hostName, portNumber);
@@ -103,18 +104,23 @@ public class Client{
       case "u":
         System.out.print("Enter file path: ");
         String fileUploadDestination = keyboard.nextLine();
-        sendFile(fileUploadDestination);
+        String[] fileNameArray = fileUploadDestination.split("/");
+        String file = fileNameArray[fileNameArray.length -1];
+        if(availableFiles.contains(file)){
+          System.out.println("File already exists");
+        }else{
+          sendFile(fileUploadDestination);
+        }
         break;
       case "d":
         System.out.print("Enter file to download: ");
         String fileName = keyboard.nextLine();
-        System.out.print("Enter download path: ");
-        String fileDownloadDestination = keyboard.nextLine();
-        receiveFile(fileName, fileDownloadDestination);
+        receiveFile(fileName);
         break;
       case "s":
         System.out.print("Enter a message: ");
         String message = keyboard.nextLine();
+        message = username + ": " + message;
         sendMessages(message);
         break;
       case "r":
@@ -167,40 +173,51 @@ public class Client{
 
   public static void sendFile(String filePath){
     try{
-      OutputStream fileOut = clientSocket.getOutputStream();
       out.writeUTF("sending_file --true");
       out.writeUTF(filePath);
+      // Socket fileSocket = establishFileConnection();
+      // OutputStream fileOut = fileSocket.getOutputStream();
+      System.out.println("Get's here");
+
       byte[] fileContent = uploadFile(filePath);
-      if(fileContent != null){
-        fileOut.write(fileContent);
-      }
+      fileOut.write(fileContent);
+      fileOut.flush();
+      System.out.println("Get's here");
+      // fileSocket.close();
     }catch(IOException e){
       System.out.println(e);
-    }finally{
-      if(fileOut != null){
-        try {
-          fileOut.close();
-        }catch(IOException e){
-          System.out.println(e);
-        }
-      }
     }
   }
 
 
-  public static void receiveFile(String fileName, String filePath){
+  public static void receiveFile(String fileName){
     try{
-      InputStream fileInputStream = clientSocket.getInputStream();
       out.writeUTF("requesting_file --true");
       out.writeUTF(fileName);
       ByteArrayOutputStream baos = new ByteArrayOutputStream();
-      while(fileInputStream.available() != 0) {
-          baos.write(fileInputStream.read());
+      baos.write(fileIn.read());
+      while(fileIn.available() > 0) {
+          baos.write(fileIn.read());
       }
       byte[] fileContent = baos.toByteArray();
+      String filePath = "../resources/" + fileName;
       downloadFile(fileContent, filePath);
     }catch(IOException e){
       System.out.println(e);
+    }
+  }
+
+
+  public static Socket establishFileConnection(){
+      Socket socket = null;
+    try{
+      InetAddress host = InetAddress.getLocalHost();
+      hostName = host.getHostName();
+      socket = new Socket(hostName, portNumber);
+    }catch(IOException e){
+      System.out.println(e);
+    }finally{
+      return socket;
     }
   }
 
