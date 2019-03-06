@@ -3,7 +3,8 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-//package log;
+
+package log;
 
 /**
  *
@@ -12,9 +13,9 @@
 
 import java.sql.Connection;
 import java.sql.*;
- 
+
 class Log {
- 
+
     private String url = "jdbc:mysql://nightmare.cs.uct.ac.za:3306/kngemi002";
     private String user = "kngemi002";
     private String password = "eif4ooNu";
@@ -36,12 +37,12 @@ class Log {
         while(rs.next()){
             String id2 = rs.getString("id");
             String message = rs.getString("message");
-            String date = rs.getString("date_added");            
+            String date = rs.getString("date_added");
             System.out.println(id2 + ", " + message + ", " + date);
         }
 
     }
- 
+
     public boolean groupMatchPair(String id, String password) throws Exception{
         String sql = "select * from groups where id = '" + id + "' and password = '" + password + "';";
         ResultSet rs = stmt.executeQuery(sql);
@@ -90,7 +91,7 @@ class Log {
         //LocalTime time = new LocalTime(); //Need Joda Time package:https://github.com/JodaOrg/joda-time/releases
         //LocalDate date = new LocalDate();
         //String dateAdded = date.toString() + " " + time.toString();
-        String dateAdded = "Monday";    //for testing            
+        String dateAdded = "Monday";    //for testing
         String sql = "insert chat_log values" + "('" + id + "', '" + message + "', '" + dateAdded + "')";
         System.out.println();
         stmt.executeUpdate(sql);
@@ -119,7 +120,7 @@ class Log {
         while(rs.next()){
             String id = rs.getString("id");
             String message = rs.getString("message");
-            String date2 = rs.getString("date_added");            
+            String date2 = rs.getString("date_added");
             System.out.println(id + ", " + message + ", " + date2);
 
         }
@@ -132,7 +133,7 @@ class Log {
         System.out.println();
         while(rs.next()){
             String id = rs.getString("id");
-            String password = rs.getString("password");            
+            String password = rs.getString("password");
             System.out.println(id + ", " + password);
 
         }
@@ -145,7 +146,7 @@ class Log {
         System.out.println();
         while(rs.next()){
             String id = rs.getString("id");
-            String password = rs.getString("password");            
+            String password = rs.getString("password");
             System.out.println(id + ", " + password);
 
         }
@@ -157,7 +158,6 @@ class Log {
         stmt.executeUpdate(sql);
 
     }
- 
+
 
 }
-

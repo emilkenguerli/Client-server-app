@@ -36,7 +36,6 @@ public class ChatServer {
   public static void acceptClients(){
     while(true){
       try{
-        serverSocket.bind(new InetSocketAddress("192.168.56.1", portNumber));
         Socket serviceSocket = serverSocket.accept();
         UUID clientId = UUID.randomUUID();
         ServiceConnection connection = new ServiceConnection(clientId, serviceSocket);
