@@ -12,20 +12,24 @@
 
 import java.sql.Connection;
 import java.sql.*;
-// import org.joda.time.*; //Need Joda Time package:https://github.com/JodaOrg/joda-time/releases
  
 class Log {
  
-    private static final String url = "jdbc:mysql://nightmare.cs.uct.ac.za:3306/kngemi002";
- 
-    private static final String user = "kngemi002";
- 
-    private static final String password = "eif4ooNu"; // "aM6meib5"; //wohpheal";
+    private String url = "jdbc:mysql://nightmare.cs.uct.ac.za:3306/kngemi002";
+    private String user = "kngemi002";
+    private String password = "eif4ooNu";
+    private Connection conn = null;
+    private Statement stmt = null;
 
-    private static Connection conn = null;
-    private static Statement stmt = null;
+    public Log() throws Exception{
+        Class.forName("com.mysql.jdbc.Driver").newInstance();
+            conn = DriverManager.getConnection(url, user, password);
+            System.out.println("Success");
+        stmt = conn.createStatement();
+    }
 
-    public static void addUserHistory(String id) throws Exception{
+
+    public void addUserHistory(String id) throws Exception{
         String sql = "select * from chat_log where id = '" + id + "';";
         ResultSet rs = stmt.executeQuery(sql);
         boolean exist = false;
@@ -38,7 +42,7 @@ class Log {
 
     }
  
-    public static boolean groupMatchPair(String id, String password) throws Exception{
+    public boolean groupMatchPair(String id, String password) throws Exception{
         String sql = "select * from groups where id = '" + id + "' and password = '" + password + "';";
         ResultSet rs = stmt.executeQuery(sql);
         boolean exist = false;
@@ -49,7 +53,7 @@ class Log {
 
     }
 
-    public static boolean userMatchPair(String id, String password) throws Exception{
+    public boolean userMatchPair(String id, String password) throws Exception{
         String sql = "select * from users where id = '" + id + "' and password = '" + password + "';";
         ResultSet rs = stmt.executeQuery(sql);
         boolean exist = false;
@@ -60,7 +64,7 @@ class Log {
 
     }
 
-    public static boolean doesUserExist(String id) throws Exception{
+    public boolean doesUserExist(String id) throws Exception{
         String sql = "select * from users where id = '" + id + "';";
         ResultSet rs = stmt.executeQuery(sql);
         boolean exist = false;
@@ -71,7 +75,7 @@ class Log {
 
     }
 
-    public static boolean doesGroupExist(String id) throws Exception{
+    public boolean doesGroupExist(String id) throws Exception{
         String sql = "select * from groups where id = '" + id + "';";
         ResultSet rs = stmt.executeQuery(sql);
         boolean exist = false;
@@ -82,7 +86,7 @@ class Log {
 
     }
 
-    public static void insertIntoChat_History(String id, String message) throws Exception{
+    public void insertIntoChat_History(String id, String message) throws Exception{
         //LocalTime time = new LocalTime(); //Need Joda Time package:https://github.com/JodaOrg/joda-time/releases
         //LocalDate date = new LocalDate();
         //String dateAdded = date.toString() + " " + time.toString();
@@ -93,21 +97,21 @@ class Log {
         System.out.println("Inserted message into chat_log");
     }
 
-    public static void insertIntoUsers(String id, String password) throws Exception{
+    public void insertIntoUsers(String id, String password) throws Exception{
         String sql = "insert users values" + "('" + id + "', '" + password + "')";
         System.out.println();
         stmt.executeUpdate(sql);
         System.out.println("Inserted record into users");
     }
 
-    public static void insertIntoGroups(String id, String password) throws Exception{
+    public void insertIntoGroups(String id, String password) throws Exception{
         String sql = "insert groups values" + "('" + id + "', '" + password + "')";
         System.out.println();
         stmt.executeUpdate(sql);
         System.out.println("Inserted record into groups");
     }
 
-    public static void printChat_Log() throws Exception{
+    public void printChat_Log() throws Exception{
         String sql = "select*from chat_log";
         ResultSet rs = stmt.executeQuery(sql);
         System.out.println("Data from chat_log table:");
@@ -121,7 +125,7 @@ class Log {
         }
     }
 
-    public static void printUsers() throws Exception{
+    public void printUsers() throws Exception{
         String sql = "select*from users";
         ResultSet rs = stmt.executeQuery(sql);
         System.out.println("Data from users table:");
@@ -134,7 +138,7 @@ class Log {
         }
     }
 
-    public static void printGroups() throws Exception{
+    public void printGroups() throws Exception{
         String sql = "select*from groups";
         ResultSet rs = stmt.executeQuery(sql);
         System.out.println("Data from groups table:");
@@ -147,38 +151,13 @@ class Log {
         }
     }
 
-    public static void deleteLog() throws Exception{
+    public void deleteLog() throws Exception{
         System.out.println("Deleting data from chat_log table:");
         String sql = "delete from chat_log";
         stmt.executeUpdate(sql);
 
     }
  
-    public static void main(String args[]) throws Exception{
-        try {
-            Class.forName("com.mysql.jdbc.Driver").newInstance();
-            conn = DriverManager.getConnection(url, user, password);
-            System.out.println("Success");
-        stmt = conn.createStatement();
-
-        //insertIntoChat_History("10", "bka");
-        //insertIntoUsers("10", "Bla");
-             //insertIntoGroups("50", "Red Army");
-        //printChat_Log();
-        //printUsers();
-        //printGroups();
-        //boolean exist = doesUserExist("15");
-        //boolean exist2 = doesGroupExist("50");
-        //boolean match = groupMatchPair("50", "Red Army");
-        //boolean match2 = userMatchPair("10", "Bla");
-        //addUserHistory("10");
-
- 
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-    
-    }
 
 }
+
