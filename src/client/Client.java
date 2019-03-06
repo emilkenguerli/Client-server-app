@@ -15,6 +15,7 @@ import java.lang.Boolean;
 
 public class Client{
 
+  private static final String SERVER_IP_ADDRESS =  "192.168.0.116";
   private static String clientId;
   private static String userName;
   private static String hostName;
@@ -33,7 +34,7 @@ public class Client{
 
       InetAddress host = InetAddress.getLocalHost();
       hostName = host.getHostName();
-      clientSocket = new Socket(hostName, portNumber);
+      clientSocket = new Socket(SERVER_IP_ADDRESS, portNumber);
       fileOut = clientSocket.getOutputStream();
       fileIn = clientSocket.getInputStream();
       out = new DataOutputStream(clientSocket.getOutputStream());
@@ -120,7 +121,7 @@ public class Client{
       case "s":
         System.out.print("Enter a message: ");
         String message = keyboard.nextLine();
-        message = username + ": " + message;
+        message = userName + ": " + message;
         sendMessages(message);
         break;
       case "r":
