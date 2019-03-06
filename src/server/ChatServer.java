@@ -1,3 +1,5 @@
+package server;
+
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -45,29 +47,49 @@ public class ChatServer {
   }
 
 
-  public static ChatGroup addConnection(String groupName, ServiceConnection connection){
+  public static ChatGroup addConnectionToNewGroup(String groupName, String password, ServiceConnection connection){
+    for(ChatGroup group : groups.values()) {
+      if(group.getGroupName().equals(groupName)) {
+        return null;
+      }
+    }
+    UUID groupId = UUID.randomUUID();
+    ChatGroup searchGroup = new ChatGroup(groupName, password, groupId);
+    searchGroup.addConnection(connection);
+    groups.put(groupId, searchGroup);
+    return searchGroup;
+  }
+
+
+  public static ChatGroup addConnectionToExistingGroup(String groupName, String password, ServiceConnection connection){
     ChatGroup searchGroup = null;
     for(ChatGroup group : groups.values()) {
       if(group.getGroupName().equals(groupName)) {
-        searchGroup = group;
-        connection.setGroupId(searchGroup.getGroupId());
-        break;
+        if(!password.equals(group.getPassword())){
+          return null;
+        }else{
+          searchGroup = group;
+          connection.setGroupId(group.getGroupId());
+          searchGroup.addConnection(connection);
+          break;
+        }
       }
     }
-    if(searchGroup == null){
-      UUID groupId = UUID.randomUUID();
-      searchGroup = new ChatGroup(groupName, groupId);
-      searchGroup.addConnection(connection);
-      groups.put(groupId, searchGroup);
-      System.out.println("Made new group");
-    }else{
-      searchGroup.addConnection(connection);
-      System.out.println("Didn't make new group");
-    }
-    for(ServiceConnection con: searchGroup.getConnections().values()){
-      System.out.println(con.getRemoteSocketAddress());
-    }
+    System.out.println("Correct function call: " + searchGroup);
     return searchGroup;
+  }
+
+
+  public static Socket establishFileConnection(){
+    Socket fileServiceSocket = null;
+    try{
+      fileServiceSocket = serverSocket.accept();
+      FileConnection fileConnection = new FileConnection(fileServiceSocket);
+    }catch(IOException e){
+      System.out.println(e);
+    }finally{
+      return fileServiceSocket;
+    }
   }
 
 
